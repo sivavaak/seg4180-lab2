@@ -1,0 +1,11 @@
+import segmentation_models_pytorch as smp
+
+
+def create_unet(encoder_name="resnet34", encoder_weights="imagenet", num_classes=1):
+    return smp.Unet(
+        encoder_name=encoder_name,
+        encoder_weights=encoder_weights,
+        in_channels=3,
+        classes=num_classes,
+        activation=None,
+    )

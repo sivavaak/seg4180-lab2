@@ -1,0 +1,11 @@
+services:
+  lab2:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+      - ./checkpoints:/app/checkpoints
+      - ./outputs:/app/outputs
+    env_file:
+      - .env
