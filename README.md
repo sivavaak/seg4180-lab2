@@ -47,6 +47,13 @@ python evaluate.py
 
 Reports mean IoU and Dice score on the full dataset.
 
+```bash
+python plot_metrics.py
+python plot_samples.py
+```
+
+Saves visual plots of loss and validation metrics, along with side-by-side comparisons of prediction samples.
+
 ## Inference
 
 ```bash

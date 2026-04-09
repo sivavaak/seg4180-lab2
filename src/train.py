@@ -1,11 +1,12 @@
 import os
+import json
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
 from config import (
     DATA_DIR, BATCH_SIZE, NUM_EPOCHS, LEARNING_RATE,
-    IMAGE_SIZE, MODEL_CHECKPOINT_PATH, NUM_WORKERS,
+    IMAGE_SIZE, MODEL_CHECKPOINT_PATH, NUM_WORKERS, OUTPUT_DIR,
 )
 from dataset import (
     AerialSegmentationDataset, get_train_transforms, get_val_transforms,
@@ -60,7 +61,9 @@ def train():
     )
 
     os.makedirs(os.path.dirname(MODEL_CHECKPOINT_PATH), exist_ok=True)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
     best_val_loss = float("inf")
+    history = []
 
     for epoch in range(NUM_EPOCHS):
         model.train()
@@ -96,6 +99,14 @@ def train():
         val_dice /= len(val_loader)
         scheduler.step(val_loss)
 
+        history.append({
+            "epoch": epoch + 1,
+            "train_loss": round(train_loss, 4),
+            "val_loss": round(val_loss, 4),
+            "val_iou": round(val_iou, 4),
+            "val_dice": round(val_dice, 4),
+        })
+
         print(
             f"Epoch {epoch+1}/{NUM_EPOCHS} - "
             f"Train Loss: {train_loss:.4f} - "
@@ -109,7 +120,10 @@ def train():
             torch.save(model.state_dict(), MODEL_CHECKPOINT_PATH)
             print(f"  Saved best model (val_loss={val_loss:.4f})")
 
-    print("Training complete.")
+    metrics_path = os.path.join(OUTPUT_DIR, "training_history.json")
+    with open(metrics_path, "w") as f:
+        json.dump(history, f, indent=2)
+    print(f"Training complete. Metrics saved to {metrics_path}")
 
 
 if __name__ == "__main__":

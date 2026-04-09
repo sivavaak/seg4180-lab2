@@ -13,7 +13,5 @@ checkpoints/
 *.pt
 *.pth
 wandb/
-CLAUDE.md
 report_outline.md
 Lab 1/
-.claude/
